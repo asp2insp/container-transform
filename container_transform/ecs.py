@@ -1,4 +1,5 @@
 import json
+import os
 import uuid
 
 import six
@@ -86,9 +87,17 @@ class ECSTransformer(BaseTransformer):
         :return: The text output
         :rtype: str
         """
+        outputContainers = []
+        for container in containers:
+            if 'env_file' in container:
+                if not 'environment' in container:
+                    container['environment'] = []
+                container['environment'].extend(self._emit_parsed_env(container['env_file']))
+                del container['env_file']
+            outputContainers.append(container)
         task_definition = {
             'family': self.family,
-            'containerDefinitions': containers,
+            'containerDefinitions': outputContainers,
             'volumes': self.volumes or []
         }
         if verbose:
@@ -167,6 +176,27 @@ class ECSTransformer(BaseTransformer):
         for k, v in six.iteritems(environment):
             output.append({'name': k, 'value': v})
         return output
+
+    def ingest_env_file(self, env_file):
+        return env_file
+
+    def emit_env_file(self, env_file):
+        return env_file
+
+    def _emit_parsed_env(self, env_file):
+        output = []
+        for filename in env_file:
+            with open(filename) as f:
+                for line in [line.strip() for line in f]:
+                    if line.startswith('#'):
+                        continue
+                    if line.find('=') > -1:
+                        parts = line.split('=')
+                        output.append({'name': parts[0], 'value': parts[1]})
+                    else:
+                        output.append({'name': line, 'value': os.getenv(line)})
+        return output
+
 
     def ingest_command(self, command):
         return ' '.join(command)

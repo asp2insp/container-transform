@@ -151,6 +151,24 @@ ARG_MAP = {
             'required': False,
         },
     },
+    'env_file': {
+        TransformationTypes.ECS.value: {
+            'name': 'env_file',
+            'required': False,
+        },
+        TransformationTypes.FIG.value: {
+            'name': 'env_file',
+            'required': False,
+        },
+        TransformationTypes.COMPOSE.value: {
+            'name': 'env_file',
+            'required': False,
+        },
+        TransformationTypes.SYSTEMD.value: {
+            'name': 'env_file',
+            'required': False,
+        },
+    },
     'entrypoint': {
         TransformationTypes.ECS.value: {
             'name': 'entryPoint',

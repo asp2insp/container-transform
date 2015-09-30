@@ -175,6 +175,12 @@ class ComposeTransformer(BaseTransformer):
     def emit_environment(self, environment):
         return environment
 
+    def ingest_env_file(self, env_file):
+        return env_file
+
+    def emit_env_file(self, env_file):
+        return env_file
+
     def ingest_command(self, command):
         return command
 
